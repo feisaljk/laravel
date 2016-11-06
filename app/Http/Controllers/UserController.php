@@ -8,20 +8,10 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
-    
-    public function getDashboard()
-    {
-        return view('dashboard');
-    }
-
-    public function getLogout()
-    {
-        Auth::logout();
-        return redirect()->route('home');
-    }
     
     public function postSignUp(Request $request)
     {
@@ -58,5 +48,36 @@ class UserController extends Controller
             return redirect()->route('dashboard');
         }
         return redirect()->back();
+    }
+
+    public function getLogout()
+    {
+        Auth::logout();
+        return redirect()->route('home');
+    }
+    
+    public function getAccount()
+    {
+        return view('account', ['user' => Auth::user()]);
+    }
+
+    public function postSaveAccount(Request $request)
+    {
+        $this->validate($request, [
+           'full_name' => 'required|max:120'
+        ]);
+
+        $user = Auth::user();
+        $old_name = $user->full_name;
+        $user->image = $request->file('image');
+        $user->full_name = $request['full_name'];
+        $user->update();
+        return redirect()->route('account');
+    }
+
+    public function getUserImage($filename)
+    {
+        $file = Storage::disk('local')->get($filename);
+        return new Response($file, 200);
     }
 }

@@ -41,10 +41,32 @@ Route::group(['middleware' => ['web']], function () {
         'as' => 'account'
     ]);
 
+    Route::post('/upateaccount', [
+        'uses' => 'UserController@postSaveAccount',
+        'as' => 'account.save'
+    ]);
+
+    Route::get('/userimage/{filename}', [
+        'uses' => 'UserController@getUserImage',
+        'as' => 'account.image'
+    ]);
+
     Route::get('/dashboard', [
-        'uses' => 'UserController@getDashboard',
+        'uses' => 'PostController@getDashboard',
         'as' => 'dashboard',
         'middleware' => 'auth'
     ]);
+
+    Route::post('/createpost', [
+        'uses' => 'PostController@CreatePost',
+        'as' => 'post.create'
+    ]);
+
+    Route::get('/deletepost/{post_id}', [
+        'uses' => 'PostController@getDeletePost',
+        'as' => 'post.delete',
+        'middleware' => 'auth'
+    ]);
+    
     
 });

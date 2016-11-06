@@ -1,11 +1,11 @@
 @extends('layouts.master')
 
 @section('content')
-    @include('includes.message-block')
     <section class="row new-post">
         <div class="col-md-6 col-md-offset-3">
-            <form action="#" method="post" class="create-post-form">
-              <input type="hidden" name="_token" value="#">
+            @include('includes.message-block')
+            <form action="{{ route('post.create') }}" method="post" class="create-post-form">
+                {!! csrf_field() !!}
 
                 <div class="panel panel-default panel-create"> <!-- panel-create -->
                     <div class="panel-heading">
@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="panel-body">        
-                        <textarea name="description" class="form-control createpost-form comment" cols="30" rows="3" id="createPost" cols="30" rows="2" placeholder="Write something....."></textarea>
+                        <textarea name="postedtext" class="form-control createpost-form comment" cols="30" rows="3" id="createPost" cols="30" rows="2" placeholder="Write something....."></textarea>
                     </div>
 
                     <div class="panel-footer">
@@ -32,10 +32,13 @@
 
     <section class="row posts">
         <div class="col-md-6 col-md-offset-3">
+            @foreach($posts as $post)
+            
             <div class="timeline-posts">
-                <div class="panel panel-default panel-post  animated" id="post4481">
+                <div class="panel panel-default panel-post">
                     <div class="panel-heading no-bg">
                         <div class="post-author">
+                            @if(Auth::user() == $post->user)
                             <div class="post-options">
                                 <ul class="list-inline no-margin">
                                     <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-angle-down"></i></a>
@@ -46,7 +49,7 @@
                                                 </a>
                                             </li>
                                             <li class="main-link">
-                                                <a href="#" class="delete-post" data-post-id="4481">
+                                                <a href="{{ route('post.delete', ['post_id' => $post->id]) }}" class="delete-post" data-post-id="4481">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>delete
                                                 </a>
                                             </li>
@@ -54,6 +57,7 @@
                                     </li>
                                 </ul>
                             </div>
+                            @endif
                         
                             <div class="user-avatar">
                                 <a href="https://goo.gl/Ws3eL5">
@@ -65,12 +69,12 @@
                                 <ul class="list-unstyled no-margin">
                                     <li>
                                         <a href="https://socialite.laravelguru.com/bootstrapguru" title="@bootstrapguru" data-toggle="tooltip" data-placement="top" class="user-name user">
-                                        Feisal Jamaludin Kahfi
+                                        {{ $post->user->full_name }}
                                         </a>
                                     </li>
                                     <li>
                                         <time class="post-time timeago" datetime="2016-11-06 19:04:53" title="2016-11-06 19:04:53">
-                                            2016-11-06 19:04:53
+                                            {{ $post->created_at }}
                                         </time>
                                     </li>
                                 </ul>
@@ -80,7 +84,7 @@
                     
                     <div class="panel-body">
                         <div class="text-wrapper">
-                            <p>Hello world </p>
+                            <p>{{ $post->body }}</p>
                             <div class="post-image-holder"></div>
                             <div class="post-v-holder"></div>
                         </div>
@@ -96,6 +100,8 @@
             
                 </div>
             </div>
+            @endforeach
+            
         </div>
     </section>
 
